@@ -3,8 +3,6 @@ const cart = document.querySelector(".cart");
 const cartClose = document.querySelector("#cart-close");
 cartIcon.addEventListener("click", () => cart.classList.add("active"));
 cartClose.addEventListener("click", () => cart.classList.remove("active"));
- 
-const addCartButtons = document.querySelectorAll(".add-cart");
 addCartButtons.forEach(button => {
     button.addEventListener("click", event => {
         const productBox = event.target.closest(".product-box");
@@ -35,38 +33,35 @@ const addToCart = productBox => {
             <h2 class="cart-product-title">${productTitle}</h2>
             <span class="cart-price">${productPrice}</span>
             <div class="cart-quantity">
-                <button id="decrement">-</button>
+                <button class="decrement-btn">-</button>
                 <span class="number">1</span>
-                <button id="increment">+</button>
+                <button class="increment-btn">+</button>
             </div>
         </div>
-        <i class="ri-delete-bin-fill"></i>
+        <i class="ri-delete-bin-fill cart-remove"></i>
     `;
     
     cartContent.appendChild(cartBox);
-
     cartBox.querySelector(".cart-remove").addEventListener("click", () => {
         cartBox.remove();
-
         updateCartCount(-1);
-
         updateTotalPrice();
     });
 
-
     cartBox.querySelector(".cart-quantity").addEventListener("click", event => {
         const numberElement = cartBox.querySelector(".number");
-        const decrementButton = cartBox.querySelector("#decrement");
-        let quantity = numberElement.textContent;
-
-        if (event.target.id === "decrement" && quantity > 1) {
-            quantity--;
-            if (quantity === 1) {
-                decrementButton.Style.color = "#999";
+        const decrementButton = cartBox.querySelector(".decrement-btn"); 
+        let quantity = parseInt(numberElement.textContent);
+        if (event.target.classList.contains("decrement-btn")) {
+             if (quantity > 1) {
+                quantity--;
+                if (quantity === 1) {
+                    decrementButton.style.color = "#999";
+                }
             }
-        }else if (event.target.id === "decrement") {
+        } else if (event.target.classList.contains("increment-btn")) {
             quantity++;
-            decrementButton.Style.color = "#333";
+            decrementButton.style.color = "#333";
         }
 
         numberElement.textContent = quantity;
@@ -75,28 +70,32 @@ const addToCart = productBox => {
     });
 
     updateCartCount(1);
-
     updateTotalPrice();
 };
 
 const updateTotalPrice =() => {
-    const totalPriceElement = documen.querySelector(".total-price");
+    const totalPriceElement = document.querySelector(".total-price");
     const cartBoxes = cartContent.querySelectorAll(".cart-box");
     let total = 0;
     cartBoxes.forEach(cartBox => {
-        const totalPriceElement = document.querySelector(".cart-price");
+        const cartPriceElement = cartBox.querySelector(".cart-price"); 
         const quantityElement = cartBox.querySelector(".number");
-        const price = totalPriceElement.textContent.replace("₹", "");
-        const quantity = quantityElement.textContent;
-        total += price*quantity;
+        const price = parseFloat(cartPriceElement.textContent.replace("₹", "")); 
+        const quantity = parseInt(quantityElement.textContent);
+        total += price * quantity;
     });
-    totalPriceElement.textContent =`$₹{total}`;
+    totalPriceElement.textContent = `₹${total}`; 
 };
 
 let cartItemCount = 0;
 const updateCartCount = change => {
     const cartItemCountBadge = document.querySelector(".cart-item-count");
-    cartItemCount += change;
+    if (change !== 0) {
+        cartItemCount += change;
+    } else {
+        cartItemCount = 0; 
+    }
+
     if (cartItemCount > 0) {
         cartItemCountBadge.style.visibility = "visible";
         cartItemCountBadge.textContent = cartItemCount;
@@ -116,8 +115,8 @@ buyNowButton.addEventListener("click", () => {
 
     cartBoxes.forEach(cartBox => cartBox.remove());
 
-    cartItemCount = 0;
-    updateCartCount(0);
+    
+    updateCartCount(0); 
 
     updateTotalPrice();
 
