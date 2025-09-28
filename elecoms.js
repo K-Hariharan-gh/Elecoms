@@ -3,6 +3,8 @@ const cart = document.querySelector(".cart");
 const cartClose = document.querySelector("#cart-close");
 cartIcon.addEventListener("click", () => cart.classList.add("active"));
 cartClose.addEventListener("click", () => cart.classList.remove("active"));
+ 
+const addCartButtons = document.querySelectorAll(".price-and-cart i");
 addCartButtons.forEach(button => {
     button.addEventListener("click", event => {
         const productBox = event.target.closest(".product-box");
@@ -42,16 +44,19 @@ const addToCart = productBox => {
     `;
     
     cartContent.appendChild(cartBox);
+
     cartBox.querySelector(".cart-remove").addEventListener("click", () => {
         cartBox.remove();
         updateCartCount(-1);
         updateTotalPrice();
     });
 
+
     cartBox.querySelector(".cart-quantity").addEventListener("click", event => {
         const numberElement = cartBox.querySelector(".number");
         const decrementButton = cartBox.querySelector(".decrement-btn"); 
         let quantity = parseInt(numberElement.textContent);
+
         if (event.target.classList.contains("decrement-btn")) {
              if (quantity > 1) {
                 quantity--;
@@ -65,7 +70,6 @@ const addToCart = productBox => {
         }
 
         numberElement.textContent = quantity;
-
         updateTotalPrice();
     });
 
@@ -115,7 +119,6 @@ buyNowButton.addEventListener("click", () => {
 
     cartBoxes.forEach(cartBox => cartBox.remove());
 
-    
     updateCartCount(0); 
 
     updateTotalPrice();
